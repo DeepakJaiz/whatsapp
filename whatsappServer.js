@@ -145,18 +145,18 @@ app.post("/login",async function(req,res){
         res.status(404).send(error)
       */
         
-  io.on('connection',(socket)=> {
+   io.on('connection',(socket)=> {
     socket.on("send",async function(msg){
         console.log(msg)
-        let {mobile,message,id}=msg
+        let {mobile,message,id,time}=msg
         let chats = await fs.promises.readFile(fname,"utf8")
         let data1 = JSON.parse(chats)
         let chatdata = data1.find((st)=>st.id===+id)
         let friend = chatdata.contact.find((st)=>st.mobile===+mobile)
-        friend.message.push({type:"rcv",msg:message})
+        friend.message.push({type:"rcv",msg:message,time:time})
         let chatdata2 = data1.find((st)=>st.mobile===+mobile)
         let friend2 = chatdata2.contact.find((st)=>st.mobile===+chatdata.mobile)
-        friend2.message.push({type:"send",msg:message})
+        friend2.message.push({type:"send",msg:message,time:time})
         let data2=JSON.stringify(data1);
         await fs.promises.writeFile(fname,data2)
        //let chatdata3 = data1.find((st)=>st.id===+id)
