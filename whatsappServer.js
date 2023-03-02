@@ -29,7 +29,7 @@ const http = app.listen(port,()=>console.log(`Node App Listening on port ${port}
 const io = require("socket.io")(http,
     {
     cors: {
-      origin: "https://task8-7b6c8.web.app",
+      origin: "https://abcder-de751.web.app",
     },
   });
 
