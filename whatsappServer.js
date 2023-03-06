@@ -145,23 +145,53 @@ app.post("/login",async function(req,res){
         res.status(404).send(error)
       */
         
-   io.on('connection',(socket)=> {
+ io.on('connection',(socket)=> {
     socket.on("send",async function(msg){
         console.log(msg)
-        let {mobile,message,id,time}=msg
+        let {mobile,message,id,time,filetype,file}=msg
+      let img = file.toString("base64")
+      console.log(img)
+       
+
         let chats = await fs.promises.readFile(fname,"utf8")
         let data1 = JSON.parse(chats)
         let chatdata = data1.find((st)=>st.id===+id)
         let friend = chatdata.contact.find((st)=>st.mobile===+mobile)
-        friend.message.push({type:"rcv",msg:message,time:time})
+        if(filetype==="text"){
+        friend.message.push({type:"rcv",msg:message,time:time,filetype:filetype})
+        }
+        else{
+          friend.message.push({type:"rcv",msg:message,time:time,filetype:filetype,file:img}) 
+        }
         let chatdata2 = data1.find((st)=>st.mobile===+mobile)
         let friend2 = chatdata2.contact.find((st)=>st.mobile===+chatdata.mobile)
-        friend2.message.push({type:"send",msg:message,time:time})
+        if(filetype==="text"){
+          friend2.message.push({type:"send",msg:message,time:time,filetype:filetype})
+        }
+        else{
+          friend2.message.push({type:"send",msg:message,time:time,filetype:filetype,file:img})
+        }
         let data2=JSON.stringify(data1);
         await fs.promises.writeFile(fname,data2)
        //let chatdata3 = data1.find((st)=>st.id===+id)
         io.emit("receive-msg",data1)
     })
+    socket.on("connect11",function(user1){
+      console.log(user1)
+      let index = users.findIndex((st)=>st===user1)
+      console.log(index)
+      if(index<0 ){
+     users.push(user1)
+     console.log("uyuyiiu")
+      }
+      console.log(users)
+     io.emit("online11",users)
+    })
+    socket.on("disconnect11",function(user1){
+      let index = users.findIndex((st)=>st===user1)
+      users.splice(1,index)
+      io.emit("ofline11",users)
+     })
     socket.on("join-msg",async function(msg){
       console.log("connected",msg)
       let {mobile,id}=msg
