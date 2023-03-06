@@ -124,7 +124,7 @@ app.post("/login",async function(req,res){
       }
   })
 
-  const users = {}
+  
 
 /*app.post("/chat",passport.authenticate("roleUser",{session:false}),async function(req,res){
     let {mobile,message}=req.body
