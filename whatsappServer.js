@@ -150,9 +150,9 @@ app.post("/login",async function(req,res){
     socket.on("send",async function(msg){
         console.log(msg)
         let {mobile,message,id,time,filetype,file}=msg
+        if(filetype!=="text"){
       let img = file.toString("base64")
-      console.log(img)
-       
+        }
 
         let chats = await fs.promises.readFile(fname,"utf8")
         let data1 = JSON.parse(chats)
