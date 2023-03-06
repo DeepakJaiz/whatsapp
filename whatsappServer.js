@@ -60,7 +60,8 @@ passport.use("roleUser",strategyUser)
 
 const {chatdata}=require("./whatsappData.js")
 let fs= require("fs");
-let fname="whatsapp.json"
+let fname="whatsapp.json";
+const users = []
 
 app.get("/resetData",function(req,res){
     let data= JSON.stringify(chatdata)
