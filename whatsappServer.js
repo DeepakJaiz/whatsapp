@@ -146,18 +146,19 @@ app.post("/login",async function(req,res){
         res.status(404).send(error)
       */
         
- io.on('connection',(socket)=> {
-    socket.on("send",async function(msg){
+  io.on('connection',(socket)=> {
+        socket.on("send",async function(msg){
         console.log(msg)
         let {mobile,message,id,time,filetype,file}=msg
         let img = "";
         if(filetype!=="text"){
-         img = file.toString("base64")
+        img = file.toString("base64")
+        console.log(img)
         }
-
         let chats = await fs.promises.readFile(fname,"utf8")
         let data1 = JSON.parse(chats)
         let chatdata = data1.find((st)=>st.id===+id)
+      
         let friend = chatdata.contact.find((st)=>st.mobile===+mobile)
         if(filetype==="text"){
         friend.message.push({type:"rcv",msg:message,time:time,filetype:filetype})
@@ -175,12 +176,18 @@ app.post("/login",async function(req,res){
         }
         let data2=JSON.stringify(data1);
         await fs.promises.writeFile(fname,data2)
-       //let chatdata3 = data1.find((st)=>st.id===+id)
-        io.emit("receive-msg",data1)
+        let chatdata4 = data1.find((st)=>st.mobile===+mobile)
+        let chatdata5 = data1.find((st)=>st.id===+id)
+       let chatdata3 = chatdata4.contact.find((st)=>st.mobile===+chatdata.mobile)
+       let chatdata6 = chatdata5.contact.find((st)=>st.mobile===+mobile)
+       // io.to(mobile).emit("receive-msg",data1)
+       io.to(mobile).emit("receive-msg",{msgData:chatdata4,userData:chatdata3})
+       io.to(chatdata.mobile).emit("receive-msg",{msgData:chatdata5,userData:chatdata6})
     })
     socket.on("connect11",function(user1){
       console.log(user1)
       let index = users.findIndex((st)=>st===user1)
+      socket.join(user1)
       console.log(index)
       if(index<0 ){
      users.push(user1)
@@ -203,6 +210,8 @@ app.post("/login",async function(req,res){
      //let friend = chatdata.contact.find((st)=>st.mobile===+mobile)
       io.emit("msg",data1)
     })
-   
+    socket.on("disconnect",() =>{
+      console.log("Discconect : ", socket.id)
+     })
    
 });
