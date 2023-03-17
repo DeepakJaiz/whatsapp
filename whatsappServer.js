@@ -215,5 +215,8 @@ app.post("/login",async function(req,res){
    // socket.on("disconnect",() =>{
    //   console.log("Discconect : ", socket.id)
    //  })
+      socket.on("connect_error", (err) => {
+  console.log(`connect_error due to ${err.message}`);
+});
    
 });
