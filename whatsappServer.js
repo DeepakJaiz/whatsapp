@@ -1,7 +1,7 @@
 let express=require("express")
 let passport = require("passport")
 let jwt = require("jsonwebtoken")
-
+const http = require(‘http’)
 let JwtStratergy = require("passport-jwt").Strategy
 let ExtractJwt = require("passport-jwt").ExtractJwt
 let app=express();
@@ -24,9 +24,10 @@ app.use(function(req, res, next){
 
 app.use(passport.initialize())
 const port = process.env.PORT || 2410;
-const http = app.listen(port,()=>console.log(`Node App Listening on port ${port}!`));
+const server = http.createServer(app)
+server.listen(port,()=>console.log(`Node App Listening on port ${port}!`));
 
-const io = new require("socket.io")(http,
+const io =require("socket.io")(server,
     {
     cors: {
       origin: "https://an8task-3f3c5.web.app",
