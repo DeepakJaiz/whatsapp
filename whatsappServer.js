@@ -7,7 +7,7 @@ let ExtractJwt = require("passport-jwt").ExtractJwt
 let app=express();
 app.use(express.json());
 app.use(function(req, res, next){
-    res.header("Access-Control-Allow-Origin","*")
+    res.header("Access-Control-Allow-Origin","https://an8task-3f3c5.web.app")
     res.header(
         "Access-Control-Allow-Methods",
         "GET, POST, OPTIONS, PUT, PATCH, DELETE, HEAD"
@@ -25,9 +25,9 @@ app.use(function(req, res, next){
 app.use(passport.initialize())
 const port = process.env.PORT || 2410;
 
-let server = app.listen(port,()=>console.log(`Node App Listening on port ${port}!`));
+const http = app.listen(port,()=>console.log(`Node App Listening on port ${port}!`));
 
-const io =require("socket.io")(server,
+const io =require("socket.io")(http,
     {
     cors: {
       origin: "https://an8task-3f3c5.web.app",
