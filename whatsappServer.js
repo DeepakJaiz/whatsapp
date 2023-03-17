@@ -211,8 +211,8 @@ app.post("/login",async function(req,res){
      //let friend = chatdata.contact.find((st)=>st.mobile===+mobile)
       io.emit("msg",data1)
     })
-    socket.on("disconnect",() =>{
-      console.log("Discconect : ", socket.id)
-     })
+   // socket.on("disconnect",() =>{
+   //   console.log("Discconect : ", socket.id)
+   //  })
    
 });
