@@ -151,6 +151,7 @@ app.post("/login",async function(req,res){
   io.on('connection',(socket)=> {
         socket.on("send",async function(msg){
         console.log(msg)
+            console.log(users)
         let {mobile,message,id,time,filetype,file}=msg
         let img = "";
         if(filetype!=="text"){
