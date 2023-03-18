@@ -220,3 +220,6 @@ app.post("/login",async function(req,res){
 });
    
 });
+io.on("connect_error", (err) => {
+  console.log(`connect_error due to ${err.message}`);
+});
