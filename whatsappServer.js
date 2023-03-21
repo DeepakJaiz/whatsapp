@@ -151,8 +151,10 @@ app.post("/login",async function(req,res){
   io.on('connection',(socket)=> {
         socket.on("send",async function(msg){
         console.log(msg)
-            console.log(users)
+        socket.join()
+        console.log(users)
         let {mobile,message,id,time,filetype,file}=msg
+       
         let img = "";
         if(filetype!=="text"){
         img = file.toString("base64")
@@ -161,6 +163,7 @@ app.post("/login",async function(req,res){
         let chats = await fs.promises.readFile(fname,"utf8")
         let data1 = JSON.parse(chats)
         let chatdata = data1.find((st)=>st.id===+id)
+        socket.join(chatdata.mobile)
       
         let friend = chatdata.contact.find((st)=>st.mobile===+mobile)
         if(filetype==="text"){
@@ -175,7 +178,7 @@ app.post("/login",async function(req,res){
           friend2.message.push({type:"send",msg:message,time:time,filetype:filetype})
         }
         else{
-          friend2.message.push({type:"send",msg:message,time:time,filetype:filetype,file:img})
+          friend2.message.push({type:"send",msg:message,time:time,filetype:filetype,file:img,download:false})
         }
         let data2=JSON.stringify(data1);
         await fs.promises.writeFile(fname,data2)
@@ -213,14 +216,22 @@ app.post("/login",async function(req,res){
      //let friend = chatdata.contact.find((st)=>st.mobile===+mobile)
       io.emit("msg",data1)
     })
-   // socket.on("disconnect",() =>{
-   //   console.log("Discconect : ", socket.id)
-   //  })
-      socket.on("connect_error", (err) => {
-  console.log(`connect_error due to ${err.message}`);
-});
+    socket.on("downloadImg",async function(data){
+      console.log(data)
+      const {index,mobile,id} = data
+      let chats = await fs.promises.readFile(fname,"utf8")
+        let data1 = JSON.parse(chats)
+        let chatdata = data1.find((st)=>st.id===+id)
+        let friend = chatdata.contact.find((st)=>st.mobile===+mobile)
+        friend.message[index].download= true
+        let data2=JSON.stringify(data1);
+        await fs.promises.writeFile(fname,data2)
+        let chatdata5 = data1.find((st)=>st.id===+id)
+       let chatdata6 = chatdata5.contact.find((st)=>st.mobile===+mobile)
+        io.to(chatdata.mobile).emit("receive-msg",{msgData:chatdata5,userData:chatdata6})
+    })
+    socket.on("disconnect",() =>{
+      console.log("Discconect : ", socket.id)
+     })
    
-});
-io.on("connect_error", (err) => {
-  console.log(`connect_error due to ${err.message}`);
 });
