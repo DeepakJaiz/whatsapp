@@ -149,6 +149,7 @@ app.post("/login",async function(req,res){
       */
         
   io.on('connection',(socket)=> {
+      console.log("connected ",socket.id);
         socket.on("send",async function(msg){
         console.log(msg)
         socket.join()
